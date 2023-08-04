@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  client:
+    container_name: client
+    tty: true
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+     - ./client:/app
+    networks:
+      - client-net
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    privileged: true #TODO: Remove this
+
+  server:
+    container_name: server
+    tty: true
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+     - ./server:/app
+    networks:
+      - client-net
+      - server-net
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    privileged: true #TODO: remove this
+
+networks:
+  client-net:
+    name: client-net
+  server-net:
+    name: server-net
+
+#  web1:
+#    tty: true
+#    build:
+#      context: ./web1
+#      dockerfile: Dockerfile
+#    volumes:
+#     - ./src:/app
+#  web2:
+#    tty: true
+#    build:
+#      context: ./web2
+#      dockerfile: Dockerfile
+#    volumes:
+#     - ./src:/app
