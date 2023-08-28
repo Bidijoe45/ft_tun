@@ -1,54 +1,38 @@
 version: '3'
 
 services:
-  client:
-    container_name: client
+  node1:
+    container_name: node1
     tty: true
     build:
       context: ./client
       dockerfile: Dockerfile
     volumes:
-     - ./client:/app
-    networks:
-      - client-net
+      - ./vpn-client:/app
+    devices:
+      - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
-    privileged: true #TODO: Remove this
+    networks:
+      - net1
 
-  server:
-    container_name: server
+  node2:
+    container_name: node2
     tty: true
     build:
-      context: ./server
+      context: ./client
       dockerfile: Dockerfile
     volumes:
-     - ./server:/app
-    networks:
-      - client-net
-      - server-net
+     - ./vpn-client:/app
+    devices:
+      - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
-    privileged: true #TODO: remove this
+    networks:
+      - net1
 
 networks:
-  client-net:
-    name: client-net
-  server-net:
-    name: server-net
-
-#  web1:
-#    tty: true
-#    build:
-#      context: ./web1
-#      dockerfile: Dockerfile
-#    volumes:
-#     - ./src:/app
-#  web2:
-#    tty: true
-#    build:
-#      context: ./web2
-#      dockerfile: Dockerfile
-#    volumes:
-#     - ./src:/app
+  net1:
+    name: net1
